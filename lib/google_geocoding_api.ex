@@ -8,63 +8,81 @@ defmodule GoogleGeocodingApi do
 
     case result["status"] do
       "ZERO_RESULTS" ->
-        nil
+        {:error, "No results found for that address"}
       "OVER_QUERY_LIMIT" ->
-        raise GoogleGeocodingApiException, message: "You have reached your query limit"
+        {:error, "You have reached your query limit"}
       "REQUEST_DENIED" ->
-        raise GoogleGeocodingApiException, message: "Your request was denied"
+        {:error, "Your request was denied"}
       "INVALID_REQUEST" ->
-        raise GoogleGeocodingApiException, message: "Your request was invalid"
+        {:error, "Your request was invalid"}
       "UNKNOWN_ERROR" ->
-        raise GoogleGeocodingApiException, message: "Unknown error, this may succeed if you try again"
+        {:error, "Unknown error, this may succeed if you try again"}
       _ ->
-        result
+        {:ok, result}
     end
   end
 
   def geometry(address, opts \\ []) do
-    result = all_info(address, opts)
-    if result, do: List.first(result["results"])["geometry"]
+    case all_info(address, opts) do
+      {:ok, result} -> {:ok, List.first(result["results"])["geometry"]}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   def geo_location(address, opts \\ []) do
-    result = all_info(address, opts)
-    if result, do: List.first(result["results"])["geometry"]["location"]
+    case all_info(address, opts) do
+      {:ok, result} -> {:ok, List.first(result["results"])["geometry"]["location"]}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   def geo_location_northeast(address, opts \\ []) do
-    result = all_info(address, opts)
-    if result, do: List.first(result["results"])["geometry"]["viewport"]["northeast"]
+    case all_info(address, opts) do
+      {:ok, result} -> {:ok, List.first(result["results"])["geometry"]["viewport"]["northeast"]}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   def geo_location_southwest(address, opts \\ []) do
-    result = all_info(address, opts)
-    if result, do: List.first(result["results"])["geometry"]["viewport"]["southwest"]
+    case all_info(address, opts) do
+      {:ok, result} -> {:ok, List.first(result["results"])["geometry"]["viewport"]["southwest"]}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   def location_type(address, opts \\ []) do
-    result = all_info(address, opts)
-    if result, do: List.first(result["results"])["geometry"]["location_type"]
+    case all_info(address, opts) do
+      {:ok, result} -> {:ok, List.first(result["results"])["geometry"]["location_type"]}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   def formatted_address(address, opts \\ []) do
-    result = all_info(address, opts)
-    if result, do: List.first(result["results"])["formatted_address"]
+    case all_info(address, opts) do
+      {:ok, result} -> {:ok, List.first(result["results"])["formatted_address"]}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   def place_id(address, opts \\ []) do
-    result = all_info(address, opts)
-    if result, do: List.first(result["results"])["place_id"]
+    case all_info(address, opts) do
+      {:ok, result} -> {:ok, List.first(result["results"])["place_id"]}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   def address_components(address, opts \\ []) do
-    result = all_info(address, opts)
-    if result, do: List.first(result["results"])["address_components"]
+    case all_info(address, opts) do
+      {:ok, result} -> {:ok, List.first(result["results"])["address_components"]}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   def types(address, opts \\ []) do
-    result = all_info(address, opts)
-    if result, do: List.first(result["results"])["types"]
+    case all_info(address, opts) do
+      {:ok, result} -> {:ok, List.first(result["results"])["types"]}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   defp make_request(address, opts \\ []) do
